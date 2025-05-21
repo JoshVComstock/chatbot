@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Coffee, MessageSquare, X, Settings, ChevronLeft, Menu as MenuIcon } from 'lucide-react';
+import { restaurantService } from './services/restaurantService';
 
 const FloatingButton = ({ onClick, isOpen }) => (
   <div 
@@ -278,32 +279,65 @@ const SpecialOfferBanner = ({ children }) => (
 const ConfigPanel = ({ isOpen, onClose, restaurant, setRestaurant }) => {
   if (!isOpen) return null;
   
-  const handleChangeName = (e) => {
-    setRestaurant({...restaurant, name: e.target.value});
+  const handleChangeName = async (e) => {
+    const newName = e.target.value;
+    setRestaurant(prev => ({ ...prev, name: newName }));
+    try {
+      await restaurantService.updateConfig({ name: newName });
+    } catch (error) {
+      console.error('Error al actualizar el nombre:', error);
+    }
   };
   
-  const handleChangeWelcomeMessage = (e) => {
-    setRestaurant({...restaurant, welcomeMessage: e.target.value});
+  const handleChangeWelcomeMessage = async (e) => {
+    const newMessage = e.target.value;
+    setRestaurant(prev => ({ ...prev, welcomeMessage: newMessage }));
+    try {
+      await restaurantService.updateConfig({ welcomeMessage: newMessage });
+    } catch (error) {
+      console.error('Error al actualizar el mensaje de bienvenida:', error);
+    }
   };
   
-  const handleChangeSpecialOffer = (e) => {
-    setRestaurant({...restaurant, specialOffer: e.target.value});
+  const handleChangeSpecialOffer = async (e) => {
+    const newOffer = e.target.value;
+    setRestaurant(prev => ({ ...prev, specialOffer: newOffer }));
+    try {
+      await restaurantService.updateConfig({ specialOffer: newOffer });
+    } catch (error) {
+      console.error('Error al actualizar la oferta especial:', error);
+    }
   };
 
-  const handleAddMenuItem = () => {
+  const handleAddMenuItem = async () => {
     const newMenu = [...restaurant.menu, { name: "", price: "", description: "" }];
-    setRestaurant({...restaurant, menu: newMenu});
+    setRestaurant(prev => ({ ...prev, menu: newMenu }));
+    try {
+      await restaurantService.updateMenu(newMenu);
+    } catch (error) {
+      console.error('Error al añadir plato:', error);
+    }
   };
   
-  const handleUpdateMenuItem = (index, field, value) => {
+  const handleUpdateMenuItem = async (index, field, value) => {
     const newMenu = [...restaurant.menu];
     newMenu[index][field] = value;
-    setRestaurant({...restaurant, menu: newMenu});
+    setRestaurant(prev => ({ ...prev, menu: newMenu }));
+    try {
+      await restaurantService.updateMenu(newMenu);
+    } catch (error) {
+      console.error('Error al actualizar plato:', error);
+    }
   };
   
-  const handleRemoveMenuItem = (index) => {
+  const handleRemoveMenuItem = async (index) => {
     const newMenu = restaurant.menu.filter((_, i) => i !== index);
-    setRestaurant({...restaurant, menu: newMenu});
+    setRestaurant(prev => ({ ...prev, menu: newMenu }));
+    try {
+      await restaurantService.updateMenu(newMenu);
+    } catch (error) {
+      console.error('Error al eliminar plato:', error);
+    }
   };
   
   return (
@@ -559,6 +593,20 @@ export default function RestaurantChatbot() {
       }
     ]
   });
+
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const config = await restaurantService.getConfig();
+        if (config) {
+          setRestaurant(config);
+        }
+      } catch (error) {
+        console.error('Error al cargar la configuración:', error);
+      }
+    };
+    loadConfig();
+  }, []);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
