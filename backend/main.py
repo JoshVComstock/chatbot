@@ -4,12 +4,16 @@ from pydantic import BaseModel
 from typing import List
 from pymongo import MongoClient
 from chatbot import RestaurantChatbot
-from crud.restaurant import RestaurantCRUD
+from crud_restaurant.restaurant import RestaurantCRUD
 from models import (
     RestaurantConfigCreate,
     RestaurantConfigUpdate,
     RestaurantConfigInDB,
     Message,
+    Menu,
+    Plato,
+    Promocion,
+    RestaurantConfig,
 )
 
 app = FastAPI(title="Restaurant Chatbot API")
@@ -34,7 +38,7 @@ restaurant_crud = RestaurantCRUD(db.restaurant_config)
 chatbot = RestaurantChatbot()
 
 
-@app.post("/chat")
+@app.post("/api/chatbot")
 async def chat(message: Message):
     try:
         # Usamos un ID temporal para el usuario
@@ -77,9 +81,30 @@ async def update_restaurant_config(config: RestaurantConfigUpdate):
 
 
 @app.put("/restaurant/menu", response_model=RestaurantConfigInDB)
-async def update_restaurant_menu(menu: List[dict]):
+async def update_restaurant_menu(menu: Menu):
     try:
-        updated_config = restaurant_crud.update_menu(menu)
+        updated_config = restaurant_crud.update_menu(
+            {"restaurante": {"menu": menu.dict()}}
+        )
+        if not updated_config:
+            raise HTTPException(status_code=404, detail="Configuracion no encontrada")
+        return updated_config
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.put("/restaurant/promociones", response_model=RestaurantConfigInDB)
+async def update_restaurant_promociones(promociones: List[Promocion]):
+    try:
+        updated_config = restaurant_crud.update_promociones(
+            {
+                "restaurante": {
+                    "precios_promociones": {
+                        "promociones": [p.dict() for p in promociones]
+                    }
+                }
+            }
+        )
         if not updated_config:
             raise HTTPException(status_code=404, detail="Configuracion no encontrada")
         return updated_config
