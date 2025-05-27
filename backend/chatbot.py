@@ -40,7 +40,7 @@ class RestaurantChatbot:
         system_content = f"""Eres un asistente virtual amable para el restaurante {info.nombre}.
         
 Información del Restaurante:
-- Nombre: {info.nombre}
+- Nombre: {info.nombre or 'doña lupe'} 
 - Dirección: {info.direccion}
 - Teléfono: {info.telefono}
 - Sitio Web: {info.pagina_web}
