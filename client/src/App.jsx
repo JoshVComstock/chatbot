@@ -62,6 +62,20 @@ export default function RestaurantChatbot() {
   });
 
   useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const config = await restaurantService.getConfig();
+        if (config) {
+          setRestaurant(config);
+        }
+      } catch (error) {
+        console.error('Error al cargar la configuración:', error);
+      }
+    };
+    loadConfig();
+  }, []);
+
+  useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([
         { id: 1, text: restaurant.welcomeMessage, sender: "bot" },
