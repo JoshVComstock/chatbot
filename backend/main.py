@@ -5,6 +5,7 @@ from typing import List
 from pymongo import MongoClient
 from chatbot import RestaurantChatbot
 from crud.restaurant import RestaurantCRUD
+from config import settings
 from models import (
     RestaurantConfigCreate,
     RestaurantConfigUpdate,
@@ -24,7 +25,7 @@ app.add_middleware(
 )
 
 # Configuración de MongoDB
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient(settings.MONGODB_URI)
 db = client.restaurant_db
 
 # Inicializar CRUD
