@@ -8,7 +8,6 @@ from crud.restaurant import RestaurantCRUD
 from config import settings
 from models import (
     RestaurantConfigCreate,
-    RestaurantConfigUpdate,
     RestaurantConfigInDB,
     Message,
 )
@@ -67,7 +66,7 @@ async def create_restaurant_config(config: RestaurantConfigCreate):
 
 
 @app.put("/restaurant/config", response_model=RestaurantConfigInDB)
-async def update_restaurant_config(config: RestaurantConfigUpdate):
+async def update_restaurant_config(config: RestaurantConfigInDB):
     try:
         updated_config = restaurant_crud.update_config(config.dict(exclude_unset=True))
         if not updated_config:

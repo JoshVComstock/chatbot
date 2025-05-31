@@ -126,7 +126,7 @@ const RestauranteForm = () => {
     };
 
     try {
-      const res = await fetch("https://localhost:3000/restaurantes", {
+      const res = await fetch("http://localhost:8000/restaurant/config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

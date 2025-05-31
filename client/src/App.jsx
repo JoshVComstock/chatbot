@@ -1,3 +1,4 @@
+import { restaurantService } from "./services/restaurantService";
 import { useState, useEffect, useRef } from "react";
 import {
   Send,
