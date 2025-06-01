@@ -20,7 +20,11 @@ class RestaurantConfigInDB(BaseModel):
     restaurante: dict  
 
     class Config:
-        allow_population_by_field_name = True
+        validate_by_name = True
+
+class RestaurantName(BaseModel):
+    id: str = Field(..., alias="_id")
+    nombreDelRestaurante: str
 
     class Config:
-        allow_population_by_field_name = True
+        validate_by_name = True
