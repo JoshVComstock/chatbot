@@ -10,7 +10,6 @@ from models import (
     RestaurantConfigCreate,
     RestaurantConfigInDB,
     Message,
-    RestaurantName,
 )
 from services.feedback_service import run_analysis
 
