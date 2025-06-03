@@ -4,10 +4,10 @@ from pydantic import BaseModel
 from typing import List
 from pymongo import MongoClient
 from chatbot import RestaurantChatbot
-from crud_restaurant.restaurant import RestaurantCRUD
+from crud.restaurant import RestaurantCRUD
+from config import settings
 from models import (
     RestaurantConfigCreate,
-    RestaurantConfigUpdate,
     RestaurantConfigInDB,
     Message,
     Menu,
@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 # Configuración de MongoDB
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient(settings.MONGODB_URI)
 db = client.restaurant_db
 
 # Inicializar CRUD
@@ -70,7 +70,7 @@ async def create_restaurant_config(config: RestaurantConfigCreate):
 
 
 @app.put("/restaurant/config", response_model=RestaurantConfigInDB)
-async def update_restaurant_config(config: RestaurantConfigUpdate):
+async def update_restaurant_config(config: RestaurantConfigInDB):
     try:
         updated_config = restaurant_crud.update_config(config.dict(exclude_unset=True))
         if not updated_config:

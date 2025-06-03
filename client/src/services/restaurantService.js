@@ -81,5 +81,14 @@ export const restaurantService = {
       console.error('Error al actualizar el menú:', error);
       throw error;
     }
+  },
+ async sendMessage(message){
+    const response = await fetch(`${API_URL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
+    if (!response.ok) throw new Error("Error al enviar mensaje al chatbot");
+    return response.json();
   }
 }; 
