@@ -7,6 +7,18 @@ from datetime import datetime
 class RestaurantCRUD:
     def __init__(self, collection: Collection):
         self.collection = collection
+        
+    def get_all_names(self) -> Optional[dict]:
+        """Obtiene la lista de nombres de restaurantes"""
+        config = self.collection.find({}, {"_id": 1, "restaurante.informacion_basica.nombre": 1})
+        restaurants = []
+        for r in config:
+            r["_id"] = str(r["_id"])
+            nombre = r.get("restaurante", {}).get("informacion_basica", {}).get("nombre", "Sin nombre")
+            restaurants.append({"_id": r["_id"], "nombreDelRestaurante": nombre})
+        return restaurants
+
+
 
     def get_config(self) -> Optional[dict]:
         """Obtiene la configuración del restaurante"""
@@ -18,7 +30,7 @@ class RestaurantCRUD:
     def create_config(self, config: dict) -> dict:
         """Crea la configuración inicial del restaurante"""
         # Eliminar cualquier configuración existente
-        self.collection.delete_many({})
+        #self.collection.delete_many({})
 
         # Insertar nueva configuración
         config["created_at"] = datetime.now()

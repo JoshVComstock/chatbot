@@ -24,7 +24,8 @@ import { InputContainer } from "./components/ui/inputContainer";
 import { TypingIndicator } from "./components/typingIndicator";
 import { SpecialOfferBanner } from "./components/specialOfferBanner";
 import { ConfigPanel } from "./config/configPanel";
-
+import { Dropdown } from "./components/dropdown";
+import { FeedbackSummary } from "./components/feedbackSummary";
 
 export default function RestaurantChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,7 +71,7 @@ export default function RestaurantChatbot() {
           setRestaurant(config);
         }
       } catch (error) {
-        console.error('Error al cargar la configuración:', error);
+        console.error("Error al cargar la configuración:", error);
       }
     };
     loadConfig();
@@ -147,17 +148,16 @@ export default function RestaurantChatbot() {
   }
   setIsTyping(false);
 };
-
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [formulario, setFormulario] = useState(false);
   const toggleConfigPanel = () => {
-/*     setShowConfig(!showConfig);
- */    setFormulario(!formulario);
+    /*     setShowConfig(!showConfig);
+     */ setFormulario(!formulario);
   };
 
   return (
     <>
       <FloatingButton onClick={toggleChat} isOpen={isOpen} />
-
       <ChatWindow isOpen={isOpen}>
         <Header onSettingsClick={toggleConfigPanel}>
           <HeaderLogo />
@@ -207,6 +207,8 @@ export default function RestaurantChatbot() {
         />
       </ChatWindow>
       {formulario && <Formulario />}
+      <Dropdown onSelect={setSelectedRestaurant} />
+      <FeedbackSummary selectedRestaurant={selectedRestaurant} />
     </>
   );
 }
