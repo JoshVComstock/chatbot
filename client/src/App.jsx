@@ -113,95 +113,40 @@ export default function RestaurantChatbot() {
     }
   };
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (input.trim() === "") return;
+ const handleSendMessage = async (e) => {
+  e.preventDefault();
+  if (input.trim() === "") return;
 
-    const newUserMessage = {
-      id: messages.length + 1,
-      text: input,
-      sender: "user",
-    };
-
-    setMessages([...messages, newUserMessage]);
-    setInput("");
-    setIsTyping(true);
-
-    setTimeout(() => {
-      let botResponse = "";
-      const userInput = input.toLowerCase();
-
-      if (
-        userInput.includes("menú") ||
-        userInput.includes("carta") ||
-        userInput.includes("platos") ||
-        userInput.includes("comer")
-      ) {
-        if (restaurant.menu.length > 0) {
-          botResponse = `En ${restaurant.name} ofrecemos una variedad de platos mediterráneos. Algunos de nuestros platos populares son:\n\n`;
-
-          restaurant.menu.forEach((item, index) => {
-            botResponse += `• ${item.name} (${item.price}): ${item.description}\n`;
-            if (index < restaurant.menu.length - 1) botResponse += "\n";
-          });
-
-          botResponse +=
-            "\n¿Te gustaría conocer alguna recomendación especial del chef?";
-        } else {
-          botResponse = `En ${restaurant.name} ofrecemos una variedad de platos mediterráneos. ¿Te interesa alguna categoría en particular como entradas, platos principales o postres?`;
-        }
-      } else if (
-        userInput.includes("reserva") ||
-        userInput.includes("reservar") ||
-        userInput.includes("mesa")
-      ) {
-        botResponse =
-          "¡Perfecto! Para hacer una reserva necesitaré algunos datos: ¿Para qué fecha y hora deseas la reserva? ¿Cuántas personas serán?";
-      } else if (
-        userInput.includes("hora") ||
-        userInput.includes("abierto") ||
-        userInput.includes("horario")
-      ) {
-        botResponse =
-          "Nuestro horario es: Lunes a Jueves de 12pm a 10pm, Viernes y Sábados de 12pm a 12am, y Domingos de 12pm a 9pm.";
-      } else if (
-        userInput.includes("ubicación") ||
-        userInput.includes("dirección") ||
-        userInput.includes("donde")
-      ) {
-        botResponse =
-          "Estamos ubicados en Av. Mediterráneo 123, en el centro de la ciudad. Tenemos estacionamiento gratuito para clientes.";
-      } else if (
-        userInput.includes("oferta") ||
-        userInput.includes("promoción") ||
-        userInput.includes("descuento") ||
-        userInput.includes("especial")
-      ) {
-        botResponse = `¡Tenemos una promoción especial! ${restaurant.specialOffer} También ofrecemos 2x1 en postres los martes.`;
-      } else if (
-        restaurant.menu.some((item) =>
-          userInput.includes(item.name.toLowerCase())
-        )
-      ) {
-        const mentionedItem = restaurant.menu.find((item) =>
-          userInput.includes(item.name.toLowerCase())
-        );
-
-        botResponse = `¡${mentionedItem.name} es una excelente elección! ${mentionedItem.description} Su precio es ${mentionedItem.price}. ¿Te gustaría ordenarlo o conocer más detalles?`;
-      } else {
-        botResponse = `Gracias por tu mensaje. En ${restaurant.name} podemos ayudarte con nuestro menú, hacer una reserva o informarte sobre nuestras promociones especiales. ¿En qué estás interesado?`;
-      }
-
-      const newBotMessage = {
-        id: messages.length + 2,
-        text: botResponse,
-        sender: "bot",
-      };
-
-      setMessages((prevMessages) => [...prevMessages, newBotMessage]);
-      setIsTyping(false);
-    }, 1500);
+  const newUserMessage = {
+    id: messages.length + 1,
+    text: input,
+    sender: "user",
   };
+
+  setMessages([...messages, newUserMessage]);
+  setInput("");
+  setIsTyping(true);
+
+  try {
+    const res = await restaurantService.sendMessage(input);
+    const newBotMessage = {
+      id: messages.length + 2,
+      text: res.response,
+      sender: "bot",
+    };
+    setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+  } catch (error) {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: messages.length + 2,
+        text: "Ocurrió un error al contactar al chatbot.",
+        sender: "bot",
+      },
+    ]);
+  }
+  setIsTyping(false);
+};
 
   const [formulario, setFormulario] = useState(false);
   const toggleConfigPanel = () => {
