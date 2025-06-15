@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import List
 from pymongo import MongoClient
 from chatbot import RestaurantChatbot
-from crud.restaurant import RestaurantCRUD
+from crud_restaurant.restaurant import RestaurantCRUD
 from config import settings
 from models import (
     RestaurantConfigCreate,
