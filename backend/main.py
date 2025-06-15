@@ -56,7 +56,7 @@ async def get_restaurant_config():
         return config
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+    """
 # nombre de restaurants 
 @app.get("/restaurants", response_model=List[RestaurantName])
 async def get_restaurant_names():
@@ -65,7 +65,7 @@ async def get_restaurant_names():
         return restaurants
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+"""
 # feedback de restaurant
 @app.get("/feedback")
 async def get_feedback(restaurant_name: str = Query(...)):
