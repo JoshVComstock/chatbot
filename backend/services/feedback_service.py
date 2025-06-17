@@ -2,9 +2,9 @@ import requests
 from transformers import pipeline
 
 # Google API setup
-GOOGLE_API_KEY = ''
-PLACES_SEARCH_URL = ''
-PLACE_DETAILS_URL = ''
+GOOGLE_API_KEY = 'AIzaSyDeikX1a42ijLZUnUyjJfuAjAaoWe-VoPk'
+PLACES_SEARCH_URL = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
+PLACE_DETAILS_URL = 'https://maps.googleapis.com/maps/api/place/details/json'
 
 # Load sentiment analysis model
 sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")

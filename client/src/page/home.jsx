@@ -26,6 +26,7 @@ import { SpecialOfferBanner } from "../components/specialOfferBanner";
 import { ConfigPanel } from "../config/configPanel";
 import { Dropdown } from "../components/dropdown";
 import { FeedbackSummary } from "../components/feedbackSummary";
+import { ExitButton } from "../components/exitButton";
 
 export default function RestaurantChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -209,6 +210,7 @@ export default function RestaurantChatbot() {
       {formulario && <Formulario />}
       <Dropdown onSelect={setSelectedRestaurant} />
       <FeedbackSummary selectedRestaurant={selectedRestaurant} />
+      <ExitButton />
     </>
   );
 }

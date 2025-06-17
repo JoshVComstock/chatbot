@@ -10,8 +10,13 @@ from models import (
     RestaurantConfigCreate,
     RestaurantConfigInDB,
     Message,
+    RestaurantName,
+    LoginData,
 )
 from services.feedback_service import run_analysis
+from database import users_collection
+from services.auth import verify_password
+from services.jwt_handler import create_access_token
 
 app = FastAPI(title="Restaurant Chatbot API")
 
@@ -34,6 +39,30 @@ restaurant_crud = RestaurantCRUD(db.restaurant_config)
 # Inicializar el chatbot
 chatbot = RestaurantChatbot()
 
+@app.post("/login")
+def login(data: LoginData):
+    # Find user in database
+    user = users_collection.find_one({"username": data.username})
+    if not user:
+        # Dont reveal whether user exists or not
+        raise HTTPException(
+            status_code=401,
+            detail="Verifique credenciales de autenticacion",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    # Verify password
+    if not verify_password(data.password, user["hashed_password"]):
+        raise HTTPException(
+            status_code=401,
+            detail="Verifique credenciales de autenticacion",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    # Create token (make sure you have create_access_token implemented)
+    token = create_access_token(data={"sub": user["username"]})
+    
+    return {"access_token": token, "token_type": "bearer"}
 
 @app.post("/chat")
 async def chat(message: Message):

@@ -28,3 +28,7 @@ class RestaurantName(BaseModel):
 
     class Config:
         validate_by_name = True
+
+class LoginData(BaseModel):
+    username: str
+    password: str
