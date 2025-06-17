@@ -1,30 +1,57 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const navigation = useNavigate();
-  const handleSubmit = (e) => {
+const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigation("/chatbot");
-    console.log("Login attempt:", { email, password });
+    setError(null);
+
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "Login failed");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.access_token);
+      navigate("/chatbot");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message);
+    }
   };
 
   return (
     <LoginContainer>
       <LoginCard>
         <Title>Bienvenido</Title>
-        <Subtitle>Inicia sesión en tu cuenta</Subtitle>
+        <Subtitle>Inicia sesion en tu cuenta</Subtitle>
 
         <Form onSubmit={handleSubmit}>
           <InputGroup>
             <Input
-              type="email"
-              placeholder="Correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Nombre de usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </InputGroup>
@@ -39,7 +66,9 @@ const Login = () => {
             />
           </InputGroup>
 
-          <Button type="submit">Iniciar Sesión</Button>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+
+          <Button type="submit">Iniciar Sesion</Button>
         </Form>
       </LoginCard>
     </LoginContainer>
@@ -143,4 +172,11 @@ const Button = styled.button`
   &:hover {
     opacity: 0.8;
   }
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 0.9rem;
+  margin-top: -1rem;
+  text-align: center;
 `;

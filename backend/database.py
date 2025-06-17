@@ -10,6 +10,8 @@ class Database:
         self.db = self.client[settings.DATABASE_NAME]
         self.conversations = self.db.conversations
         self.menu = self.db.menu
+        self.users = self.db.users
+
 
     def save_conversation(self, user_id: str, message: str, response: str):
         conversation = {
@@ -31,3 +33,4 @@ class Database:
 
 
 db = Database()
+users_collection = db.users

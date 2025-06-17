@@ -31,33 +31,36 @@ class RestaurantChatbot:
                 content="Eres un asistente virtual amable para un restaurante."
             )
 
-        config = self.restaurant_config.restaurante
-        info = config.informacion_basica
-        menu = config.menu
-        promos = config.precios_promociones
-        servicios = config.ambiente_servicios
+        config = self.restaurant_config.get("restaurante", {})
+        info = config.get("informacion_basica", {})
+        menu = config.get("menu", {})
+        promos = config.get("precios_promociones", {})
+        servicios = config.get("ambiente_servicios", {})
 
-        system_content = f"""Eres un asistente virtual amable para el restaurante {info.nombre}.
+
+
+        system_content = f"""Eres un asistente virtual amable para el restaurante {info.get("nombre", "doña lupe")}.
+
         
 Información del Restaurante:
-- Nombre: {info.nombre or 'doña lupe'} 
-- Dirección: {info.direccion}
-- Teléfono: {info.telefono}
-- Sitio Web: {info.pagina_web}
-- Horarios: {info.horario_atencion.lunes_a_viernes} (Lun-Vie), {info.horario_atencion.sabado} (Sáb), {info.horario_atencion.domingo} (Dom)
+- Nombre: {info.get("nombre", "doña lupe")}
+- Dirección: {info.get("direccion", "No especificada")}
+- Teléfono: {info.get("telefono", "No especificado")}
+- Sitio Web: {info.get("pagina_web", "No disponible")}
+- Horarios: {info.get("horario_atencion", {}).get("lunes_a_viernes", "No info")} (Lun-Vie), {info.get("horario_atencion", {}).get("sabado", "No info")} (Sáb), {info.get("horario_atencion", {}).get("domingo", "No info")} (Dom)
 
 Menú:
-- Tipo de Cocina: {menu.tipo_cocina}
-- Platos Destacados: {', '.join(plato.nombre for plato in menu.platos_estrella)}
-- Menú Infantil: {'Disponible' if menu.menu_infantil else 'No disponible'}
+- Tipo de Cocina: {menu.get("tipo_cocina", "No especificado")}
+- Platos Destacados: {', '.join(plato.get("nombre", "") for plato in menu.get("platos_estrella", []))}
+- Menú Infantil: {'Disponible' if menu.get("menu_infantil", False) else 'No disponible'}
 
 Promociones:
-- Rango de Precios: {promos.rango_precios}
-- Promociones Actuales: {', '.join(promo.descripcion for promo in promos.promociones)}
+- Rango de Precios: {promos.get("rango_precios", "No info")}
+- Promociones Actuales: {', '.join(promo.get("descripcion", "") for promo in promos.get("promociones", []))}
 
 Servicios:
-- Estilo: {servicios.estilo}
-- Servicios Disponibles: {', '.join(servicios.servicios)}
+- Estilo: {servicios.get("estilo", "No especificado")}
+- Servicios Disponibles: {', '.join(servicios.get("servicios", []))}
 
 Debes usar esta información para proporcionar respuestas precisas y útiles a las consultas de los clientes. Siempre sé amable y profesional. Responde en español, a menos que el cliente te pida específicamente responder en otro idioma."""
 

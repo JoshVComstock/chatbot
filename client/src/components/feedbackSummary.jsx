@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ThumbsUp, ThumbsDown, HelpCircle, Loader } from "lucide-react";
 import "../styles/feedbackSummary.css";
 
-import { Link } from "react-router-dom";
-
 const FEEDBACK_API = "http://localhost:8000/feedback?restaurant_name=";
 
 export const FeedbackSummary = ({ selectedRestaurant }) => {
@@ -41,39 +39,6 @@ export const FeedbackSummary = ({ selectedRestaurant }) => {
         <div className="feedback-message">
           Selecciona un restaurante para ver el analisis de reviews.
         </div>
-        <Link
-          style={{
-            position: "absolute",
-            top: "20px",
-            right: "20px",
-            backgroundColor: "#ff6b35",
-            color: "#ffffff",
-            border: "none",
-            padding: "0.8rem 1.5rem",
-            fontSize: "1rem",
-            fontWeight: "600",
-            borderRadius: "25px",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 12px rgba(255, 107, 53, 0.3)",
-            zIndex: "1000",
-            minWidth: "80px",
-            "&:hover": {
-              backgroundColor: "#e55a2b",
-              transform: "translateY(-2px)",
-              boxShadow: "0 6px 20px rgba(255, 107, 53, 0.4)",
-            },
-          }}
-          to="/"
-        >
-          Salir
-        </Link>
       </>
     );
   }

@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { 
-  FormContainer, 
-  FormHeader, 
-  FormTitle, 
-  FormSection, 
-  SectionTitle, 
-  FormGroup, 
-  Label, 
-  Input, 
-  TextArea, 
-  PrimaryButton, 
-  SecondaryButton, 
-  CheckboxContainer, 
-  Checkbox, 
+import {
+  FormContainer,
+  FormHeader,
+  FormTitle,
+  FormSection,
+  SectionTitle,
+  FormGroup,
+  Label,
+  Input,
+  TextArea,
+  PrimaryButton,
+  SecondaryButton,
+  CheckboxContainer,
+  Checkbox,
   CheckboxLabel,
   PlatoCard,
   PlatosList,
@@ -25,7 +25,7 @@ import {
   PlatoActions,
   DeleteButton,
   FormGrid,
-  FormColumn
+  FormColumn,
 } from "./style";
 
 const RestauranteForm = () => {
@@ -48,6 +48,8 @@ const RestauranteForm = () => {
     vegano: false,
     popular: false,
   });
+
+  const [formVisible, setFormVisible] = useState(true);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -76,12 +78,15 @@ const RestauranteForm = () => {
       alert("El nombre del plato es obligatorio");
       return;
     }
-    
+
     setFormData((prev) => ({
       ...prev,
-      platos_estrella: [...prev.platos_estrella, { ...nuevoPlato, id: Date.now() }],
+      platos_estrella: [
+        ...prev.platos_estrella,
+        { ...nuevoPlato, id: Date.now() },
+      ],
     }));
-    
+
     setNuevoPlato({
       nombre: "",
       descripcion: "",
@@ -90,7 +95,7 @@ const RestauranteForm = () => {
       popular: false,
     });
   };
-  
+
   const eliminarPlato = (id) => {
     setFormData((prev) => ({
       ...prev,
@@ -135,13 +140,41 @@ const RestauranteForm = () => {
       });
 
       const data = await res.json();
-      alert("¡Restaurante registrado con éxito!");
+      //alert("¡Restaurante registrado con éxito!");
       console.log(data);
+
+      //Reset form state
+      setFormData({
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        pagina_web: "",
+        tipo_cocina: "",
+        platos_estrella: [],
+        rango_precios: "",
+        estilo: "",
+        servicios: [],
+      });
+
+      setNuevoPlato({
+        nombre: "",
+        descripcion: "",
+        precio: "",
+        vegano: false,
+        popular: false,
+      });
+
+      //Hide the form
+      setFormVisible(false);
     } catch (error) {
       console.error("Error al enviar:", error);
       alert("Error al registrar el restaurante. Intente nuevamente.");
     }
   };
+
+  if (!formVisible) {
+    return <p>Restaurante registrado.</p>;
+  }
 
   return (
     <FormContainer onSubmit={handleSubmit}>
@@ -155,16 +188,16 @@ const RestauranteForm = () => {
           <FormColumn>
             <FormGroup>
               <Label htmlFor="nombre">Nombre del Restaurante*</Label>
-              <Input 
+              <Input
                 id="nombre"
-                name="nombre" 
-                value={formData.nombre} 
+                name="nombre"
+                value={formData.nombre}
                 onChange={handleChange}
                 placeholder="Ej: La Buena Mesa"
                 required
               />
             </FormGroup>
-          
+
             <FormGroup>
               <Label htmlFor="telefono">Teléfono de Contacto*</Label>
               <Input
@@ -177,7 +210,7 @@ const RestauranteForm = () => {
               />
             </FormGroup>
           </FormColumn>
-          
+
           <FormColumn>
             <FormGroup>
               <Label htmlFor="direccion">Dirección Completa*</Label>
@@ -190,7 +223,7 @@ const RestauranteForm = () => {
                 required
               />
             </FormGroup>
-          
+
             <FormGroup>
               <Label htmlFor="pagina_web">Página Web</Label>
               <Input
@@ -207,7 +240,6 @@ const RestauranteForm = () => {
 
       <FormSection>
         <SectionTitle>Menú y Especialidades</SectionTitle>
-        
         <FormGroup>
           <Label htmlFor="tipo_cocina">Tipo de Cocina*</Label>
           <Input
@@ -222,7 +254,7 @@ const RestauranteForm = () => {
 
         <FormSection>
           <SectionTitle>Platos Estrella</SectionTitle>
-          
+
           {formData.platos_estrella.length > 0 && (
             <PlatosList>
               {formData.platos_estrella.map((plato) => (
@@ -231,7 +263,9 @@ const RestauranteForm = () => {
                     <PlatoHeader>
                       <PlatoTitle>{plato.nombre}</PlatoTitle>
                       <PlatoActions>
-                        <DeleteButton onClick={() => eliminarPlato(plato.id)}>×</DeleteButton>
+                        <DeleteButton onClick={() => eliminarPlato(plato.id)}>
+                          ×
+                        </DeleteButton>
                       </PlatoActions>
                     </PlatoHeader>
                     <PlatoDescription>{plato.descripcion}</PlatoDescription>
@@ -243,7 +277,7 @@ const RestauranteForm = () => {
               ))}
             </PlatosList>
           )}
-          
+
           <FormGroup>
             <Label htmlFor="plato_nombre">Agregar Nuevo Plato</Label>
             <Input
@@ -254,7 +288,7 @@ const RestauranteForm = () => {
               onChange={handleNuevoPlatoChange}
             />
           </FormGroup>
-          
+
           <FormGroup>
             <Label htmlFor="plato_descripcion">Descripción</Label>
             <TextArea
@@ -266,7 +300,7 @@ const RestauranteForm = () => {
               rows="3"
             />
           </FormGroup>
-          
+
           <FormGrid>
             <FormColumn>
               <FormGroup>
@@ -281,7 +315,7 @@ const RestauranteForm = () => {
                 />
               </FormGroup>
             </FormColumn>
-            
+
             <FormColumn>
               <FormGroup>
                 <CheckboxContainer>
@@ -294,7 +328,7 @@ const RestauranteForm = () => {
                     />
                     Vegano
                   </CheckboxLabel>
-                  
+
                   <CheckboxLabel>
                     <Checkbox
                       type="checkbox"
@@ -308,7 +342,7 @@ const RestauranteForm = () => {
               </FormGroup>
             </FormColumn>
           </FormGrid>
-          
+
           <SecondaryButton type="button" onClick={agregarPlato}>
             Agregar Plato
           </SecondaryButton>
@@ -317,7 +351,7 @@ const RestauranteForm = () => {
 
       <FormSection>
         <SectionTitle>Precios y Ambiente</SectionTitle>
-        
+
         <FormGrid>
           <FormColumn>
             <FormGroup>
@@ -332,14 +366,14 @@ const RestauranteForm = () => {
               />
             </FormGroup>
           </FormColumn>
-          
+
           <FormColumn>
             <FormGroup>
               <Label htmlFor="estilo">Estilo del Local*</Label>
-              <Input 
+              <Input
                 id="estilo"
-                name="estilo" 
-                value={formData.estilo} 
+                name="estilo"
+                value={formData.estilo}
                 onChange={handleChange}
                 placeholder="Ej: Elegante, Casual, Rústico, etc."
                 required
@@ -351,22 +385,28 @@ const RestauranteForm = () => {
 
       <FormSection>
         <SectionTitle>Servicios Adicionales</SectionTitle>
-        
+
         <CheckboxContainer>
-          {["Reservas", "Wi-Fi gratuito", "Estacionamiento", "Comida para llevar", "Terraza", "Menú infantil", "Accesibilidad"].map(
-            (servicio) => (
-              <CheckboxLabel key={servicio}>
-                <Checkbox
-                  type="checkbox"
-                  name="servicios"
-                  value={servicio.toLowerCase()}
-                  onChange={handleChange}
-                  checked={formData.servicios.includes(servicio.toLowerCase())}
-                />
-                {servicio}
-              </CheckboxLabel>
-            )
-          )}
+          {[
+            "Reservas",
+            "Wi-Fi gratuito",
+            "Estacionamiento",
+            "Comida para llevar",
+            "Terraza",
+            "Menú infantil",
+            "Accesibilidad",
+          ].map((servicio) => (
+            <CheckboxLabel key={servicio}>
+              <Checkbox
+                type="checkbox"
+                name="servicios"
+                value={servicio.toLowerCase()}
+                onChange={handleChange}
+                checked={formData.servicios.includes(servicio.toLowerCase())}
+              />
+              {servicio}
+            </CheckboxLabel>
+          ))}
         </CheckboxContainer>
       </FormSection>
 
